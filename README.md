@@ -14,7 +14,7 @@ This project implements a frontend and backend system for querying and displayin
 Implemented a responsive user interface using Angular.
 Data is displayed in a table format, showcasing the drone metadata (image ID, timestamp, altitude, battery level, etc.).
 
-- Query Input: Users can enter natural language queries like "What is the altitude of the second image?" or "What is the battery level of the drone during the last image?" into an input box.
+- Query Input: Users can enter natural language queries like "What is the altitude of the last image?" or "What is the battery level of the drone during the last image?" into an input box.
 
 - Response Display: The app shows the OpenAI response in a user-friendly manner.
 
@@ -28,7 +28,9 @@ Data is displayed in a table format, showcasing the drone metadata (image ID, ti
 - Dataset: Integrated the provided dataset of drone flight images, containing information such as altitude, battery level, image tags, and timestamps.
 
 3. AI Integration (Mock)
-- Queries like *"What is the altitude of the second image?"* or *"What is the battery level of the drone during the last image?"* are processed by basic logic and returned as mock data.
+- Due to time constraints, AI integration with a service like OpenAI was not implemented. Instead, mock responses were created based on the query type and dataset values:
+Queries like *"What is the altitude of the last image?"* or *"What is the battery level of the drone during the last image?"* are processed by basic logic and returned as mock data.
+
 
 # Instructions
 
@@ -66,21 +68,32 @@ cd drone-data-app/backend
 3. Set up a virtual environment:
 
 ```
-python3 -m venv venv
-source venv/bin/activate
-# On Windows, use `venv\Scripts\activate`
-```
-4. Install dependencies:
-
-```
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+# On Windows, use `.venv\Scripts\activate`
 ```
 
-5. Run the Flask API:
+4. Run the Flask API:
 ```
 flask run
 ```
 *The backend should be accessible at http://localhost:5000.*
+
+**Example API Request**
+`POST` to `/query` with the following JSON body:
+
+```
+{
+  "query": "What is the altitude of the last image?"
+}
+```
+
+Response (Mock Example):
+```
+{
+  "response": "The altitude of the last image is 75 meters."
+}
+```
 
 | **Feature**                               | **Description**                                                                                                    | **Estimated Time** | **Status**       | **Notes**                                      |
 |-------------------------------------------|--------------------------------------------------------------------------------------------------------------------|--------------------|------------------|------------------------------------------------|

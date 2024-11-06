@@ -19,27 +19,57 @@ def load_dataset(filename):
     try:
         with open(dataset_path) as f:
             drone_data = json.load(f)
-        dataset_context = "\n".join([
-            f"Image ID: {item['image_id']}, Altitude: {item['altitude_m']} m, Battery Level: {item['battery_level_pct']}%, Timestamp: {item['timestamp']}, Tags: {', '.join(item['image_tags'])}"
-            for item in drone_data
-        ])
-        return dataset_context
+        return drone_data, None
     except Exception as e:
         return None, str(e)
+
+def process_query(drone_data, question):
+    """
+    Basic logic to process queries like 'What is the altitude of the second image?'.
+    """
+    if "altitude" in question.lower():
+        if "second" in question.lower():
+            if len(drone_data) > 1:
+                altitude = drone_data[1]['altitude_m']
+                return f"The altitude of the second image is {altitude} meters."
+            else:
+                return "The dataset does not contain a second image."
+
+        elif "last" in question.lower():
+            if drone_data:
+                altitude = drone_data[-1]['altitude_m']
+                return f"The altitude of the last image is {altitude} meters."
+            else:
+                return "The dataset is empty."
+
+    elif "battery level" in question.lower():
+        if "last" in question.lower():
+            if drone_data:
+                battery_level = drone_data[-1]['battery_level_pct']
+                return f"The battery level of the last image is {battery_level}%."
+            else:
+                return "The dataset is empty."
+
+    return "Sorry, I could not process your query."
+
 
 def get_chatgpt_response(question, dataset_context):
     """
     Send the user query and dataset context to ChatGPT, and retrieve the response.
     """
-    prompt = f"The following is a dataset of drone images:\n\n{dataset_context}\n\nBased on this data, answer the following question: {question}"
+    messages = [
+        {"role": "system", "content": "The following is a dataset of drone images."},
+        {"role": "user", "content": f"{dataset_context}\n\nBased on this data, answer the following question: {question}"}
+    ]
 
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
         max_tokens=100,
         temperature=0
     )
-    return response['choices'][0]['text'].strip()
+    return response['choices'][0]['message']['content'].strip()
+
 
 @app.route('/api/datasets', methods=['GET'])
 def list_datasets():
@@ -74,10 +104,18 @@ def query():
     if not question or not filename:
         return jsonify({"error": "Both 'question' and 'filename' are required"}), 400
 
-    dataset_context, error = load_dataset(filename)
+    drone_data, error = load_dataset(filename)
     if error:
         return jsonify({"error": f"Failed to load dataset: {error}"}), 500
 
+    processed_response = process_query(drone_data, question)
+    if processed_response != "Sorry, I could not process your query.":
+        return jsonify({"response": processed_response})
+
+    dataset_context = "\n".join([
+        f"Image ID: {item['image_id']}, Altitude: {item['altitude_m']} m, Battery Level: {item['battery_level_pct']}%, Timestamp: {item['timestamp']}, Tags: {', '.join(item['image_tags'])}"
+        for item in drone_data
+    ])
     response_text = get_chatgpt_response(question, dataset_context)
     return jsonify({"response": response_text})
 

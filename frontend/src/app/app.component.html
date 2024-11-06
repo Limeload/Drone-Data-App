@@ -1,26 +1,31 @@
 <div class="container">
+  <mat-card class="project-header">
+    <mat-card-title>Drone Data Analysis</mat-card-title>
+    <mat-card-subtitle>Welcome to the Drone Data Analysis Dashboard! Here you can explore datasets and query details about specific records.</mat-card-subtitle>
+  </mat-card>
   <mat-card class="dataset-card">
     <mat-card-title>Available Datasets</mat-card-title>
-    <mat-card-content *ngFor="let filename of datasets" >
-      <button (click)="getDataset(filename)" class="dataset-button">{{ filename }}</button>
-      <mat-card *ngFor="let data of datasetsData[filename]" class="drone-card">
-        <mat-card-header>
-          <mat-card-title>Image ID: {{ data.image_id }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="drone-info">
-            <p><strong>Altitude:</strong> {{ data.altitude_m }} m</p>
-            <p><strong>Battery Level:</strong> {{ data.battery_level_pct }}%</p>
-            <p><strong>Timestamp:</strong> {{ data.timestamp }}</p>
-            <p><strong>Tags:</strong> {{ data.image_tags.join(', ') }}</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
+    <mat-card-content>
+      <div class="dataset-list" *ngFor="let filename of datasets">
+        <!-- <h3 class="filename-header">{{ filename }}</h3> -->
+        <mat-card *ngFor="let data of datasetsData[filename]" class="drone-card">
+          <mat-card-header>
+            <mat-card-title>Image ID: {{ data.image_id }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="drone-info">
+              <p><strong>Altitude:</strong> {{ data.altitude_m }} m</p>
+              <p><strong>Battery Level:</strong> {{ data.battery_level_pct }}%</p>
+              <p><strong>Timestamp:</strong> {{ data.timestamp }}</p>
+              <p><strong>Tags:</strong> {{ data.image_tags.join(', ') }}</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </mat-card-content>
   </mat-card>
-
   <mat-card class="query-card">
-    <mat-card-title>Query ChatGPT</mat-card-title>
+    <mat-card-title>Query</mat-card-title>
     <mat-card-content>
       <mat-form-field class="input-field" appearance="fill">
         <mat-label>Enter your question</mat-label>
@@ -33,13 +38,11 @@
           <mat-option *ngFor="let dataset of datasets" [value]="dataset">{{ dataset }}</mat-option>
         </mat-select>
       </mat-form-field>
-
       <button mat-raised-button color="primary" (click)="sendQuery(selectedDataset.value, question.value)">
         Ask
       </button>
     </mat-card-content>
   </mat-card>
-
   <mat-card class="response-card" *ngIf="queryResult">
     <mat-card-title>Response:</mat-card-title>
     <mat-card-content>

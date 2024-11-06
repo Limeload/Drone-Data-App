@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 })
 export class AppComponent implements OnInit {
-  title = 'frontend';
+  title = 'Drone Data Analysis';
   datasets: string[] = [];
   datasetsData: any = {};
   queryResult: string = '';
@@ -31,11 +31,13 @@ export class AppComponent implements OnInit {
     private _datasetsService: DatasetsService
   ) {}
 
-ngOnInit(): void {
+  ngOnInit(): void {
     this._datasetsService.getDatasets().subscribe((data: any) => {
       this.datasets = data.datasets;
+      this.datasets.forEach((filename) => this.getDataset(filename));
     });
   }
+
 
 getDataset(filename: string): void {
     this._datasetsService.getDatasetFile(filename).subscribe((data: any) => {
