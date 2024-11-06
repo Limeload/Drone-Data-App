@@ -9,7 +9,8 @@ import { CommonModule } from '@angular/common';
     BrowserModule,
     FormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+
   ]
 })
 export class AppModule { }

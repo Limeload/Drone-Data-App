@@ -1,51 +1,49 @@
-<div class="app-container">
-  <h1 class="app-title">Drone Data Dashboard</h1>
+<div class="container">
+  <mat-card class="dataset-card">
+    <mat-card-title>Available Datasets</mat-card-title>
+    <mat-card-content *ngFor="let filename of datasets" >
+      <button (click)="getDataset(filename)" class="dataset-button">{{ filename }}</button>
+      <mat-card *ngFor="let data of datasetsData[filename]" class="drone-card">
+        <mat-card-header>
+          <mat-card-title>Image ID: {{ data.image_id }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="drone-info">
+            <p><strong>Altitude:</strong> {{ data.altitude_m }} m</p>
+            <p><strong>Battery Level:</strong> {{ data.battery_level_pct }}%</p>
+            <p><strong>Timestamp:</strong> {{ data.timestamp }}</p>
+            <p><strong>Tags:</strong> {{ data.image_tags.join(', ') }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
 
-  <!-- Query Section -->
-  <section class="query-section">
-    <h3>Ask a Question About the Drone Data</h3>
-    <input
-      [(ngModel)]="query"
-      placeholder="e.g., 'What is the altitude of the second image?'"
-      class="query-input"
-    />
-    <button (click)="sendQuery()" class="query-button">Submit</button>
-    <div *ngIf="response" class="response-display">
-      <h2>AI Response:</h2>
-  <pre>{{ response }}</pre>
-    </div>
-  </section>
+  <mat-card class="query-card">
+    <mat-card-title>Query ChatGPT</mat-card-title>
+    <mat-card-content>
+      <mat-form-field class="input-field" appearance="fill">
+        <mat-label>Enter your question</mat-label>
+        <input matInput #question placeholder="Type a question" />
+      </mat-form-field>
 
-  <!-- Dataset List Section -->
-  <section class="datasets-section">
-    <h3>Available Datasets</h3>
-    <ul class="datasets-list">
-      <li *ngFor="let filename of datasetFiles">
-        <button (click)="getDataset(filename)" class="dataset-button">{{ filename }}</button>
-      </li>
-    </ul>
-  </section>
+      <mat-form-field class="select-field" appearance="fill">
+        <mat-label>Select a Dataset</mat-label>
+        <mat-select #selectedDataset>
+          <mat-option *ngFor="let dataset of datasets" [value]="dataset">{{ dataset }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <!-- Drone Data Display Section -->
-  <section *ngFor="let filename of datasetFiles" class="drone-data-section">
-    <h4>{{ filename }}</h4>
-    <table *ngIf="datasetData[filename]" class="drone-data-table">
-      <thead>
-        <tr>
-          <th>Image ID</th>
-          <th>Timestamp</th>
-          <th>Altitude (m)</th>
-          <th>Battery Level (%)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of datasetData[filename]">
-          <td>{{ data.image_id }}</td>
-          <td>{{ data.timestamp }}</td>
-          <td>{{ data.altitude_m }} m</td>
-          <td>{{ data.battery_level_pct }}%</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
+      <button mat-raised-button color="primary" (click)="sendQuery(selectedDataset.value, question.value)">
+        Ask
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="response-card" *ngIf="queryResult">
+    <mat-card-title>Response:</mat-card-title>
+    <mat-card-content>
+      <p>{{ queryResult }}</p>
+    </mat-card-content>
+  </mat-card>
 </div>
