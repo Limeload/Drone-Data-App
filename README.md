@@ -80,7 +80,7 @@ flask run
 *The backend should be accessible at http://localhost:5000.*
 
 **Example API Request**
-`POST` to `/query` with the following JSON body:
+- `POST` to `/query` with the following JSON body:
 
 ```
 {
@@ -88,12 +88,27 @@ flask run
 }
 ```
 
-Response (Mock Example):
+- Response (Mock Example):
 ```
 {
   "response": "The altitude of the last image is 75 meters."
 }
 ```
+
+**Running Tests**
+- To run tests, ensure that pytest is installed:
+
+```
+pip install pytest
+```
+
+- To run the tests, use the following command:
+
+```
+pytest
+```
+
+This will automatically find and run the tests in the tests directory, including test_app.py.
 
 | **Feature**                               | **Description**                                                                                                    | **Estimated Time** | **Status**       | **Notes**                                      |
 |-------------------------------------------|--------------------------------------------------------------------------------------------------------------------|--------------------|------------------|------------------------------------------------|
